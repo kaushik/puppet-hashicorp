@@ -2,16 +2,19 @@
 class hashicorp (
   $install_dir        = undef,
   $download_cache_dir = undef,
+  $gnupg_key_id = '51852D87348FFC4C'
 ) {
   include '::hashicorp::defaults'
   include '::gnupg'
 
-  gnupg_key { 'hashicorp':
-    ensure     => present,
-    key_id     => '51852D87348FFC4C',
-    user       => 'root',
-    key_source => 'https://keybase.io/hashicorp/pgp_keys.asc?fingerprint=91a6e7f85d05c65630bef18951852d87348ffc4c',
-    key_type   => public
+  if $gnupg_key_id {
+    gnupg_key { 'hashicorp':
+      ensure     => present,
+      key_id     => $gnupg_key_id,
+      user       => 'root',
+      key_source => 'https://keybase.io/hashicorp/pgp_keys.asc?fingerprint=91a6e7f85d05c65630bef18951852d87348ffc4c',
+      key_type   => public
+    }
   }
 
   file { $download_cache_dir:
@@ -29,3 +32,4 @@ class hashicorp (
     source => 'puppet:///modules/hashicorp/hashicorp-download.sh',
   }
 }
+
